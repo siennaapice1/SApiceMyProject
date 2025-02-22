@@ -1,12 +1,13 @@
 using UnityEngine;
 using TMPro; // Required for TextMeshPro
-using System.Collections; // For the Coroutine
+using System.Collections;
+using System; // For the Coroutine
 
 public class PlayerCollision : MonoBehaviour
 {
     public float pushForce = 5f; // Strength of the push
     public TextMeshProUGUI scoreText; // TextMeshProUGUI for the score
-    private int score = 0; // Player's score
+    protected int score = 0; // Player's score
     private CharacterController controller;
 
     // Cooldown timer variables
@@ -34,24 +35,13 @@ public class PlayerCollision : MonoBehaviour
                 sphereRb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
 
                 // Increment the score by 10 and update the UI
-                score += 10;
+                score += 25;
                 UpdateScoreUI();
 
                 // Start the cooldown before the player can push again
                 canPushSphere = false;
                 StartCoroutine(CooldownTimer());
             }
-        }
-    }
-
-    // Detect when the sphere collides with terrain objects (pillars, trees, etc.)
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.CompareTag("Terrain"))
-        {
-            // Decrease the score by 10 when colliding with terrain
-            score -= 10;
-            UpdateScoreUI();
         }
     }
 
@@ -69,9 +59,12 @@ public class PlayerCollision : MonoBehaviour
             scoreText.text = "Score: " + score;
         }
     }
-    public void DecreaseScore(int amount)
+
+    internal System.Object DecreaseScore(int v)
     {
-        score -= amount;
+        score -= v;
         UpdateScoreUI();
+        return score;
     }
 }
+
