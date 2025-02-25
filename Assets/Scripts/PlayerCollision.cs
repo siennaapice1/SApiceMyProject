@@ -1,3 +1,5 @@
+
+
 using UnityEngine;
 using TMPro; // Required for TextMeshPro
 using System.Collections;
@@ -14,9 +16,18 @@ public class PlayerCollision : MonoBehaviour
     private bool canPushSphere = true; // Flag to control if the player can push the sphere
     public float pushCooldown = 1f; // Cooldown time in seconds
 
+    // Audio Source and Sound Effect
+    public AudioClip collisionSound; // Sound to play on collision
+    private AudioSource audioSource; // The audio source component
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        audioSource = GetComponent<AudioSource>(); // Get or add the AudioSource
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>(); // Ensure an AudioSource exists
+        }
         UpdateScoreUI();
     }
 
@@ -34,9 +45,15 @@ public class PlayerCollision : MonoBehaviour
                 pushDirection.Normalize();
                 sphereRb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
 
-                // Increment the score by 10 and update the UI
+                // Increment the score by 25 and update the UI
                 score += 25;
                 UpdateScoreUI();
+
+                // Play the collision sound if set
+                if (collisionSound != null)
+                {
+                    audioSource.PlayOneShot(collisionSound); // Play the sound once
+                }
 
                 // Start the cooldown before the player can push again
                 canPushSphere = false;
@@ -67,4 +84,3 @@ public class PlayerCollision : MonoBehaviour
         return score;
     }
 }
-
